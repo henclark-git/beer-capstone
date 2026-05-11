@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beer, Industrialization, and Inequality</title>
+  <style>
+    :root {
+      --cream: #f7f0e3;
+      --cream-deep: #efe4d4;
+      --amber: #c48b3c;
+      --amber-dark: #8b5a1e;
+      --ink: #2a1810;
+      --ink-muted: #5c4336;
+      --paper: #fffdf8;
+      --shadow: rgba(42, 24, 16, 0.12);
+      --radius: 6px;
+      --font-body: Georgia, "Times New Roman", serif;
+      --maxw: 780px;
+      --transition: 0.35s ease;
+      --rail: #a67c52;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :root {
+        --transition: 0.01ms;
+      }
+      * {
+        scroll-behavior: auto !important;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 1.125rem;
+      line-height: 1.65;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(196, 139, 60, 0.18), transparent 55%),
+        linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 55%, #e8dcc8 100%);
+      min-height: 100vh;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      z-index: 100;
+      padding: 0.75rem 1rem;
+      background: var(--amber-dark);
+      color: var(--cream);
+      text-decoration: none;
+      border-radius: var(--radius);
+    }
+
+    .skip-link:focus {
+      left: 1rem;
+      top: 1rem;
+    }
+
+    .wrap {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    header {
+      text-align: center;
+      padding-bottom: 2rem;
+      border-bottom: 3px solid var(--amber);
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    header::after {
+      content: "";
+      display: block;
+      margin: 1.25rem auto 0;
+      width: min(100%, 280px);
+      height: 10px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          var(--amber-dark) 0 8px,
+          transparent 8px 16px
+        );
+      opacity: 0.35;
+      border-radius: 2px;
+    }
+
+    header h1 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      margin: 0 0 0.5rem;
+      line-height: 1.25;
+    }
+
+    .byline {
+      font-size: 1.05rem;
+      color: var(--ink-muted);
+      margin: 0;
+    }
+
+    section {
+      margin-bottom: 2.75rem;
+      position: relative;
+    }
+
+    section h2 {
+      font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+      letter-spacing: 0.04em;
+      color: var(--amber-dark);
+      margin: 0 0 1rem;
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.3;
+    }
+
+    #hook::before,
+    #narrative::before {
+      content: "❧";
+      position: absolute;
+      left: -0.15rem;
+      top: 0.1rem;
+      font-size: 1.5rem;
+      color: var(--amber);
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    .research-question {
+      background: var(--paper);
+      border: 1px solid var(--amber);
+      border-left-width: 5px;
+      border-radius: var(--radius);
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0;
+      box-shadow: 0 4px 20px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .research-question::before,
+    .research-question::after {
+      content: "";
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border: 2px solid rgba(196, 139, 60, 0.35);
+      pointer-events: none;
+    }
+
+    .research-question::before {
+      top: 8px;
+      left: 8px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .research-question::after {
+      bottom: 8px;
+      right: 8px;
+      border-left: none;
+      border-top: none;
+    }
+
+    .research-question p {
+      margin: 0;
+      font-size: 1.25rem;
+      line-height: 1.55;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Timeline — imposing vertical chronicle */
+    .timeline-section {
+      padding: 2rem 0 1rem;
+      margin-left: -1rem;
+      margin-right: -1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, rgba(255, 253, 248, 0.92) 0%, rgba(247, 240, 227, 0.95) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23c48b3c' fill-opacity='0.06'%3E%3Cpath d='M40 8 L44 18 L54 18 L46 24 L50 34 L40 28 L30 34 L34 24 L26 18 L36 18 Z'/%3E%3C/g%3E%3C/svg%3E");
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 12px 40px var(--shadow);
+      border: 1px solid rgba(139, 90, 30, 0.25);
+    }
+
+    .timeline-section h2 {
+      font-size: clamp(1.35rem, 3vw, 1.65rem);
+      text-align: center;
+      margin-bottom: 0.35rem;
+      font-style: normal;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .timeline-tagline {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+      margin: 0 0 1rem;
+      font-style: italic;
+    }
+
+    .timeline-intro {
+      margin: 0 0 1.75rem;
+      color: var(--ink-muted);
+      font-size: 1rem;
+      padding: 1rem 1.15rem;
+      background: rgba(255, 253, 248, 0.85);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--amber-dark);
+      box-shadow: 0 2px 10px var(--shadow);
+    }
+
+    .timeline-progress {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--amber-dark);
+      margin: 0 0 1.5rem;
+      text-align: center;
+      letter-spacing: 0.06em;
+    }
+
+    .timeline-unlock-toast {
+      min-height: 1.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--amber-dark);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .timeline-unlock-toast:empty {
+      display: none;
+    }
+
+    .timeline-shell {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      position: relative;
+    }
+
+    @media (min-width: 520px) {
+      .timeline-shell {
+        grid-template-columns: 52px 1fr;
+        gap: 0 1rem;
+      }
+    }
+
+    .timeline-spine {
+      display: none;
+      position: relative;
+      width: 52px;
+      justify-self: center;
+    }
+
+    @media (min-width: 520px) {
+      .timeline-spine {
+        display: block;
+      }
+    }
+
+    .timeline-spine-line {
+      position: absolute;
+      left: 50%;
+      top: 1.25rem;
+      bottom: 1.25rem;
+      width: 8px;
+      transform: translateX(-50%);
+      background: linear-gradient(
+        180deg,
+        var(--rail) 0%,
+        var(--amber) 35%,
+        var(--amber-dark) 100%
+      );
+      border-radius: 6px;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+        3px 0 12px var(--shadow);
+    }
+
+    .timeline-nav {
+      margin-bottom: 0;
+    }
+
+    .timeline-nodes {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      counter-reset: era;
+    }
+
+    .timeline-nodes > li {
+      position: relative;
+      margin-bottom: 1.15rem;
+      padding-left: 0;
+    }
+
+    @media (min-width: 520px) {
+      .timeline-nodes > li {
+        padding-left: 0;
+      }
+    }
+
+    .timeline-nodes > li:last-child {
+      margin-bottom: 0;
+    }
+
+    .node-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0.85rem;
+    }
+
+    .step-badge {
+      flex-shrink: 0;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #e8c98a 0%, var(--amber) 55%, var(--amber-dark) 100%);
+      color: var(--paper);
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.35),
+        0 4px 0 var(--amber-dark),
+        0 10px 22px var(--shadow);
+      border: 2px solid rgba(42, 24, 16, 0.2);
+    }
+
+    .timeline-nodes > li.is-locked .step-badge {
+      background: linear-gradient(145deg, #c4b8a8 0%, #9a8f82 100%);
+      color: #f0ebe4;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .timeline-node {
+      flex: 1;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      padding: 1rem 1rem 1rem 1.1rem;
+      border: 2px solid var(--amber);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 0.92rem;
+      line-height: 1.4;
+      box-shadow: 0 3px 0 var(--amber-dark), 0 8px 20px var(--shadow);
+      transition:
+        background var(--transition),
+        color var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition),
+        transform var(--transition),
+        opacity var(--transition),
+        filter var(--transition);
+    }
+
+    .timeline-node:hover:not(:disabled) {
+      background: var(--cream-deep);
+      transform: translateY(-2px);
+    }
+
+    .timeline-node:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 2px;
+    }
+
+    .timeline-node:disabled {
+      cursor: not-allowed;
+      opacity: 0.52;
+      filter: grayscale(0.35);
+      transform: none;
+      box-shadow: 0 2px 6px var(--shadow);
+    }
+
+    .timeline-node[aria-pressed="true"] {
+      background: linear-gradient(180deg, #eecf99 0%, #d9a85c 45%, var(--amber) 100%);
+      color: var(--paper);
+      border-color: var(--amber-dark);
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.35),
+        0 4px 0 var(--amber-dark),
+        0 14px 28px var(--shadow);
+      transform: translateY(2px);
+    }
+
+    .timeline-node .node-era {
+      display: block;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+
+    .timeline-node .node-label {
+      display: block;
+      font-size: 0.88rem;
+      opacity: 0.95;
+      margin-top: 0.35rem;
+      font-weight: 600;
+    }
+
+    .timeline-node .lock-hint {
+      display: block;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      font-style: italic;
+      opacity: 0.85;
+    }
+
+    .timeline-node:disabled .lock-hint {
+      display: block;
+    }
+
+    .timeline-node:not(:disabled) .lock-hint {
+      display: none;
+    }
+
+    .timeline-node[aria-pressed="true"] .node-label {
+      opacity: 1;
+    }
+
+    .timeline-card-wrap {
+      position: relative;
+      margin-top: 2rem;
+    }
+
+    .timeline-card-wrap::before {
+      content: "";
+      display: block;
+      height: 14px;
+      margin-bottom: 0.75rem;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 6px,
+        rgba(139, 90, 30, 0.2) 6px,
+        rgba(139, 90, 30, 0.2) 10px
+      );
+      opacity: 0.8;
+    }
+
+    .timeline-card {
+      background: var(--paper);
+      border: 2px solid var(--amber);
+      border-radius: 10px;
+      padding: 0;
+      box-shadow:
+        0 10px 36px var(--shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.75);
+      overflow: hidden;
+      transition: opacity var(--transition), transform var(--transition);
+      position: relative;
+    }
+
+    .timeline-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 10px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    }
+
+    .timeline-card.is-updating {
+      opacity: 0.45;
+      transform: translateY(6px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .timeline-card.is-updating {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .timeline-card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 560px) {
+      .timeline-card-grid {
+        grid-template-columns: minmax(200px, 240px) 1fr;
+      }
+    }
+
+    .card-visual {
+      background: linear-gradient(
+        165deg,
+        rgba(196, 139, 60, 0.15) 0%,
+        rgba(239, 228, 212, 0.95) 50%,
+        var(--cream-deep) 100%
+      );
+      padding: 1.35rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      text-align: center;
+      border-bottom: 2px dashed rgba(139, 90, 30, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 560px) {
+      .card-visual {
+        border-bottom: none;
+        border-right: 2px dashed rgba(139, 90, 30, 0.25);
+      }
+    }
+
+    .card-visual::before {
+      content: "";
+      position: absolute;
+      inset: -40% -20%;
+      background: var(--era-accent, rgba(196, 139, 60, 0.08));
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .beer-caption {
+      position: relative;
+      z-index: 1;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: var(--ink-muted);
+      font-style: italic;
+      max-width: 220px;
+      margin: 0;
+    }
+
+    .beer-graphic {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+      filter: drop-shadow(0 8px 18px var(--shadow));
+    }
+
+    .beer-graphic svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .card-text {
+      padding: 1.5rem 1.5rem 1.65rem;
+      position: relative;
+    }
+
+    .card-text::before {
+      content: "";
+      position: absolute;
+      top: 1rem;
+      left: 0.65rem;
+      bottom: 1rem;
+      width: 3px;
+      border-radius: 2px;
+      background: linear-gradient(
+        180deg,
+        var(--amber) 0%,
+        transparent 100%
+      );
+      opacity: 0.45;
+    }
+
+    .timeline-card .eyebrow {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--amber-dark);
+      margin: 0 0 0.35rem;
+      font-weight: 800;
+    }
+
+    .timeline-card h3 {
+      margin: 0 0 1rem;
+      font-size: clamp(1.2rem, 2.8vw, 1.45rem);
+      line-height: 1.3;
+      color: var(--ink);
+    }
+
+    .timeline-card .card-body p {
+      margin: 0 0 1rem;
+    }
+
+    .timeline-card .card-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-card .citation {
+      margin: 1.25rem 0 0;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--cream-deep);
+      font-size: 0.92rem;
+      color: var(--ink-muted);
+      font-style: italic;
+    }
+
+    .card-actions {
+      margin-top: 1.35rem;
+      padding-top: 1.15rem;
+      border-top: 2px solid rgba(196, 139, 60, 0.35);
+    }
+
+    .btn-next-era {
+      width: 100%;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0.85rem 1.15rem;
+      border: 2px solid var(--amber-dark);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #eecf99 0%, var(--amber) 100%);
+      color: var(--paper);
+      text-shadow: 0 1px 0 rgba(42, 24, 16, 0.25);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 4px 0 var(--amber-dark),
+        0 8px 20px var(--shadow);
+      transition: transform var(--transition), box-shadow var(--transition),
+        opacity var(--transition);
+    }
+
+    .btn-next-era:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    .btn-next-era:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 3px;
+    }
+
+    .btn-next-era:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+      background: var(--cream-deep);
+      color: var(--ink-muted);
+      border-color: #b09a86;
+      text-shadow: none;
+      box-shadow: 0 2px 6px var(--shadow);
+    }
+
+    .btn-next-era.is-synthesis {
+      background: linear-gradient(180deg, #5c4033 0%, var(--ink) 100%);
+      border-color: var(--ink);
+    }
+
+    .synthesis-section {
+      margin-top: 3rem;
+      padding: 2rem 1.5rem 2.25rem;
+      background: var(--paper);
+      border: 2px solid var(--amber);
+      border-radius: 12px;
+      box-shadow: 0 12px 40px var(--shadow);
+    }
+
+    .synthesis-section h2 {
+      font-size: clamp(1.35rem, 3vw, 1.6rem);
+      font-style: normal;
+      text-transform: none;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      margin: 0 0 1rem;
+      text-align: center;
+    }
+
+    .synthesis-section .synthesis-lead {
+      font-size: 1.15rem;
+      color: var(--ink-muted);
+      margin: 0 0 1.75rem;
+      text-align: center;
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    .synthesis-section h3 {
+      font-size: 1.1rem;
+      color: var(--amber-dark);
+      margin: 1.75rem 0 0.65rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .synthesis-section p {
+      margin: 0 0 1rem;
+    }
+
+    .synthesis-section .sources-line {
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px dashed var(--cream-deep);
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--amber);
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+    }
+
+      @media print {
+      body {
+        background: white;
+      }
+
+      .timeline-node:disabled {
+        opacity: 1 !important;
+        filter: none !important;
+        cursor: default !important;
+      }
+
+      .timeline-node {
+        box-shadow: none;
+        border: 1px solid #999;
+      }
+
+      .skip-link {
+        display: none;
+      }
+
+      .timeline-section {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="wrap">
+    <header>
+      <h1>Beer, Industrialization, and Inequality</h1>
+      <p class="byline">Henry Clark</p>
+    </header>
+
+    <main id="main">
+      <section id="hook" aria-labelledby="hook-heading">
+        <h2 id="hook-heading">The puzzle in every pint</h2>
+        <p>
+          Beer is among humanity’s oldest packaged innovations: fermented grain
+          drinks turned starchy harvests into something that could be stored,
+          traded, and taxed. In medieval Europe, where untreated water could be
+          deadly, beer was often safer to drink than water itself—and it moved
+          through society from manor breweries to urban workshops. Daily beer
+          rations reached laborers in fields and workshops, while elites drank
+          too, in different styles and settings. That single fact—that the same
+          staple beverage could sustain both toil and privilege—contains a
+          theory of progress and inequality in miniature: technology, regulation,
+          taste, and power braided together in every pint.
+        </p>
+      </section>
+
+      <section id="narrative" aria-labelledby="narrative-heading">
+        <h2 id="narrative-heading">How this story is told</h2>
+        <p>
+          The chronicle below unfolds in order. Each stop unlocks the next: you
+          move through brewing history as workers, rulers, and firms themselves
+          encountered it—one era at a time.
+        </p>
+      </section>
+
+      <section id="question" aria-labelledby="question-heading">
+        <h2 id="question-heading" class="visually-hidden">Research question</h2>
+        <div class="research-question">
+          <p>
+            How has beer — from medieval ration to corporate commodity —
+            served as a mirror for class structure, technological change, and
+            inequality across history?
+          </p>
+        </div>
+      </section>
+
+      <section id="timeline" class="timeline-section" aria-labelledby="timeline-heading">
+        <h2 id="timeline-heading">Seven turning points</h2>
+        <p class="timeline-tagline">From manor ale to craft revival — in sequence.</p>
+        <p class="timeline-intro">
+          Start with the first era and open each chapter in order. Selecting the
+          newest unlocked era advances the trail; earlier eras stay available to
+          revisit. Your progress is tracked along the rail.
+        </p>
+        <p class="timeline-progress" id="timeline-progress" aria-live="polite"></p>
+        <div class="timeline-unlock-toast" id="timeline-unlock-toast" role="status" aria-live="polite"></div>
+
+        <div class="timeline-shell">
+          <div class="timeline-spine" aria-hidden="true">
+            <div class="timeline-spine-line"></div>
+          </div>
+          <div>
+            <nav class="timeline-nav" aria-label="Historical timeline — sequential">
+              <ol class="timeline-nodes" id="timeline-node-list"></ol>
+            </nav>
+          </div>
+        </div>
+
+        <div class="timeline-card-wrap">
+          <article
+            id="timeline-card"
+            class="timeline-card"
+            role="region"
+            aria-live="polite"
+            aria-labelledby="card-title-text"
+            tabindex="-1"
+          >
+            <div class="timeline-card-grid">
+              <div class="card-visual" id="card-visual">
+                <div id="card-svg-wrap" class="beer-graphic"></div>
+                <p class="beer-caption" id="card-beer-caption"></p>
+              </div>
+              <div class="card-text">
+                <p class="eyebrow" id="card-era"></p>
+                <h3 id="card-title-text"></h3>
+                <div class="card-body" id="card-body"></div>
+                <p class="citation" id="card-cite"></p>
+                <div class="card-actions">
+                  <button type="button" class="btn-next-era" id="card-next-btn">
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="synthesis" class="synthesis-section" hidden aria-labelledby="synthesis-heading">
+        <h2 id="synthesis-heading" tabindex="-1">Why beer works as an economic lens</h2>
+        <p class="synthesis-lead">
+          With the chronicle complete, the same themes that appeared era by era can
+          be read as one argument about progress, power, and who gains when a
+          staple becomes a system.
+        </p>
+
+        <h3>The throughline</h3>
+        <p>
+          Beer ties together production and daily life: it is calories and ritual,
+          wage goods and tax base, factory output and branded desire. Following it
+          from medieval ration to corporate commodity makes abstract forces—technology,
+          regulation, market structure—visible in a cup people actually raised to their
+          lips. That is why beer can stand in for broader debates about growth,
+          distribution, and inclusion without reducing history to a morality tale.
+        </p>
+
+        <h3>Five themes that recur</h3>
+        <p>
+          <strong>Subsistence versus surplus.</strong> Small beer kept workers on their
+          feet; stronger ale marked feast and rank. The gradient between hydration and
+          display maps cleanly onto who had slack income and who lived close to the edge.
+        </p>
+        <p>
+          <strong>Rules create winners.</strong> Purity laws and temperance statutes did
+          not float above economics—they sorted lawful producers from outsiders,
+          privileged some neighborhoods over others, and rerouted capital when markets
+          closed or reopened.
+        </p>
+        <p>
+          <strong>Scale redraws maps.</strong> Steam and corporate logistics rewarded big,
+          standardized batches and national shelf space. Economic progress here looked
+          like cheaper, safer supply for millions—but also thinner regional variety and
+          bargaining power concentrated upstream.
+        </p>
+        <p>
+          <strong>Taste signals class.</strong> Bourdieu’s insight—that distinction runs
+          through everyday aesthetics—fits brewing unusually well: porter labeled labor,
+          lager labeled mass taste, craft labeled educated palettes and disposable income.
+          Beer is legible snobbery and solidarity in the same aisle.
+        </p>
+        <p>
+          <strong>Markets have structure.</strong> Swinnen’s framing of beer economics—
+          policy, consolidation, trade—helps explain why crises hit incumbents and
+          entrants differently. Resource partitioning and niche revival show how inequality
+          of scale can still leave openings for specialty producers when consumers fragment.
+        </p>
+
+        <h3>Big-picture takeaways</h3>
+        <p>
+          Progress in brewing often meant safer, cheaper calories for ordinary people—
+          genuine welfare gains—while concentration shifted who captured margins.
+          Moral campaigns and quality rhetoric repeatedly fused health language with
+          control over immigrant and working-class spaces. Today’s craft resurgence is partly
+          a story about differentiation and identity, partly about retail gatekeeping and
+          price—a reminder that “choice” can widen without flattening power at the top.
+        </p>
+        <p>
+          Beer is a good lens, then, because it is mundane enough to be everywhere and
+          technical enough to trace industrial change; because it carries taste’s social
+          stain; and because its supply chain—from grain to tap—mirrors how inequality is
+          produced one reinvestment decision at a time.
+        </p>
+
+        <p class="sources-line">
+          Timeline sources include Unger (medieval), Reinheitsgebot histories, Hornsey
+          (porter and brewing), Mathias (industrial England), Blocker (temperance), Elzinga
+          (industry economics), and Carroll &amp; Swaminathan (resource partitioning).
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      Capstone project — economics &amp; history through beer.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var ERA_KEYS = [
+        "medieval",
+        "reinheit",
+        "porter",
+        "industrial",
+        "prohibition",
+        "corporate",
+        "craft",
+      ];
+
+      var ACCENTS = {
+        medieval: "rgba(101, 67, 33, 0.12)",
+        reinheit: "rgba(180, 140, 60, 0.14)",
+        porter: "rgba(40, 28, 20, 0.15)",
+        industrial: "rgba(90, 95, 110, 0.12)",
+        prohibition: "rgba(50, 45, 55, 0.14)",
+        corporate: "rgba(60, 90, 140, 0.1)",
+        craft: "rgba(46, 125, 50, 0.12)",
+      };
+
+      /* Inline SVG vignettes — unique gradient IDs per illustration */
+      var BEER_SVGS = {
+        medieval:
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" aria-hidden="true" role="img"><defs><linearGradient id="mv_body" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#6d3f1f"/><stop offset="1" stop-color="#3d2210"/></linearGradient><linearGradient id="mv_liquid" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f0c96a"/><stop offset="0.55" stop-color="#c9953a"/><stop offset="1" stop-color="#8f6220"/></linearGradient><linearGradient id="mv_foam" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fffdf5"/><stop offset="1" stop-color="#f3e4c8"/></linearGradient><radialGradient id="mv_glow" cx="35%" cy="30%" r="65%"><stop offset="0" stop-color="#fff6dd" stop-opacity="0.45"/><stop offset="1" stop-color="#f7f0e3" stop-opacity="0"/></radialGradient></defs><ellipse cx="140" cy="178" rx="92" ry="12" fill="#2a1810" opacity="0.14"/><ellipse cx="140" cy="178" rx="72" ry="8" fill="#000" opacity="0.08"/><path fill="url(#mv_body)" d="M88 42h104c6 0 11 4 12 10l14 96c2 14-8 26-22 26H96c-14 0-24-12-22-26l14-96c1-6 6-10 12-10z"/><path fill="url(#mv_liquid)" d="M98 54h84c4 0 7 3 8 7l10 72c2 12-6 22-18 22h-84c-12 0-20-10-18-22l10-72c1-4 4-7 8-7z"/><path fill="url(#mv_foam)" d="M98 52c0-10 18-18 42-18s42 8 42 18c0 6-10 12-26 14 6 2 10 7 10 13 0 10-12 18-26 18s-26-8-26-18c0-5 4-10 10-12-14-2-26-8-26-14z"/><ellipse cx="140" cy="54" rx="38" ry="11" fill="#fff" opacity="0.35"/><circle cx="118" cy="48" r="3" fill="#fff" opacity="0.55"/><circle cx="132" cy="44" r="2.5" fill="#fff" opacity="0.45"/><circle cx="154" cy="48" r="2.5" fill="#fff" opacity="0.4"/><path fill="none" stroke="#4e2c14" stroke-width="5" stroke-linecap="round" d="M192 58c28 12 44 38 44 68"/><path fill="#5c3a1e" d="M76 70c-12 4-20 16-20 30 0 18 14 32 32 32h8v-18h-6c-10 0-18-8-18-18 0-8 6-14 14-16l-10-10z"/><path fill="#8b6914" stroke="#5c4a20" stroke-width="1" d="M44 120c12-8 22-4 28 8 4-12 16-18 28-12-4 14-14 28-30 36-18-8-30-22-26-32z"/><rect width="280" height="200" fill="url(#mv_glow)"/></svg>',
+        reinheit:
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" aria-hidden="true" role="img"><defs><linearGradient id="rg_metal" x1="0" x2="1"><stop offset="0" stop-color="#ece8e2"/><stop offset="0.5" stop-color="#b8b3ad"/><stop offset="1" stop-color="#7a756f"/></linearGradient><linearGradient id="rg_beer" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#e2b84a"/></linearGradient><linearGradient id="rg_hop" x1="0" x2="1"><stop offset="0" stop-color="#9ccc65"/><stop offset="1" stop-color="#558b2f"/></linearGradient></defs><ellipse cx="132" cy="182" rx="72" ry="11" fill="#2a1810" opacity="0.12"/><path fill="url(#rg_metal)" stroke="#5c534c" stroke-width="2" d="M62 44h140l6 22v96c0 16-13 29-29 29H85c-16 0-29-13-29-29V66l6-22z"/><path fill="url(#rg_beer)" d="M78 74h108v94c0 12-10 22-22 22h-64c-12 0-22-10-22-22V74z"/><ellipse cx="132" cy="74" rx="54" ry="14" fill="#fff9e0"/><path fill="#fff" opacity="0.45" d="M90 68h84c-2 10-18 18-42 18s-40-8-42-18z"/><path fill="none" stroke="#cfc8c0" stroke-width="3" d="M62 44h140"/><ellipse cx="132" cy="44" rx="70" ry="12" fill="#d7d2cc" stroke="#9e9892"/><rect x="118" y="36" width="28" height="14" rx="3" fill="#8d6e63"/><circle cx="132" cy="34" r="6" fill="#6d4c41"/><ellipse cx="208" cy="96" rx="26" ry="34" fill="url(#rg_hop)" transform="rotate(-16 208 96)"/><path fill="#33691e" d="M198 58l14 6-8 28-12-10 6-24z"/><path fill="#558b2f" d="M222 74l10 16-24 16 6-22 8-10z"/></svg>',
+        porter:
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" aria-hidden="true" role="img"><defs><linearGradient id="pr_glass" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#f5f0ea"/><stop offset="1" stop-color="#cfc4b8"/></linearGradient><linearGradient id="pr_stout" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4e342e"/><stop offset="0.5" stop-color="#2d1b18"/><stop offset="1" stop-color="#120a08"/></linearGradient><linearGradient id="pr_head" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff8ef"/><stop offset="0.45" stop-color="#e8d5b6"/><stop offset="1" stop-color="#c9a882"/></linearGradient><linearGradient id="pr_shine" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.55"/><stop offset="0.35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><ellipse cx="140" cy="184" rx="56" ry="9" fill="#1a0f0c" opacity="0.28"/><path fill="url(#pr_glass)" stroke="#a8998c" stroke-width="2.5" d="M96 34h88l16 132H80L96 34z"/><path fill="url(#pr_stout)" d="M106 48h68v108c0 10-8 18-18 18h-32c-10 0-18-8-18-18V48z"/><path fill="url(#pr_head)" d="M106 44c0-10 14-18 34-18s34 8 34 18c0 8-12 16-28 18 8 2 14 8 14 16 0 12-16 22-34 22s-34-10-34-22c0-7 6-13 14-15-14-2-26-9-26-19z"/><ellipse cx="140" cy="44" rx="30" ry="9" fill="#fff" opacity="0.12"/><path fill="url(#pr_shine)" d="M108 52h22v96c0 6-4 10-10 10h-6c-4 0-6-6-6-14V52z" opacity="0.65"/><circle cx="122" cy="58" r="2.5" fill="#fff" opacity="0.35"/><circle cx="130" cy="54" r="1.8" fill="#fff" opacity="0.3"/></svg>',
+        industrial:
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" aria-hidden="true" role="img"><defs><linearGradient id="in_glass" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d9cfbf"/><stop offset="1" stop-color="#9a8f82"/></linearGradient><linearGradient id="in_liquid" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffd966"/><stop offset="1" stop-color="#c68c28"/></linearGradient><linearGradient id="in_bottle" x1="0" x2="1"><stop offset="0" stop-color="#6d4c41"/><stop offset="1" stop-color="#3e2723"/></linearGradient></defs><ellipse cx="140" cy="184" rx="68" ry="10" fill="#2a1810" opacity="0.15"/><rect x="52" y="52" width="176" height="96" rx="10" fill="#ece7e1" stroke="#bdae9f" stroke-width="2"/><path fill="#cfd8dc" stroke="#90a4ae" stroke-width="2" d="M96 36h88v28H96z"/><circle cx="112" cy="50" r="5" fill="#78909c"/><circle cx="168" cy="50" r="5" fill="#78909c"/><path fill="none" stroke="#b0bec5" stroke-width="3" stroke-dasharray="8 6" d="M72 100h136"/><path fill="url(#in_bottle)" stroke="#2d1e18" stroke-width="2" d="M178 64h38l6 24c8 4 14 14 14 26v42c0 14-12 26-26 26h-24c-14 0-26-12-26-26v-42c0-12 6-22 14-26l6-24z"/><path fill="url(#in_liquid)" d="M188 92h24v52c0 8-6 14-14 14h-8c-8 0-14-6-14-14V92z"/><rect x="186" y="72" width="28" height="10" rx="2" fill="#5d4037"/><path fill="url(#in_glass)" d="M62 96h52v44c0 8-6 14-14 14H76c-8 0-14-6-14-14V96z"/><path fill="url(#in_liquid)" d="M70 104h36v36c0 6-4 10-10 10h-16c-6 0-10-4-10-10v-36z"/><path fill="#eceff1" opacity="0.55" d="M68 100h14v52c0 4-2 6-6 6h-4c-3 0-4-3-4-8v-56z"/><path fill="none" stroke="#8d6e63" stroke-width="2" opacity="0.45" d="M72 112h40"/><path fill="none" stroke="#90a4ae" stroke-width="2" opacity="0.7" d="M210 44c8 6 14 14 18 24"/><path fill="#b0bec5" opacity="0.9" d="M226 36l6 10h-12z"/></svg>',
+        prohibition:
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" aria-hidden="true" role="img"><defs><linearGradient id="pb_metal" x1="0" x2="1"><stop offset="0" stop-color="#cfd8dc"/><stop offset="1" stop-color="#78909c"/></linearGradient><linearGradient id="pb_dark" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#37474f"/><stop offset="1" stop-color="#1c2529"/></linearGradient></defs><ellipse cx="140" cy="186" rx="60" ry="9" fill="#1a1a1a" opacity="0.22"/><path fill="url(#pb_metal)" stroke="#546e7a" stroke-width="2" d="M96 36h88l8 36c10 6 18 18 18 32v58c0 18-15 33-33 33h-56c-18 0-33-15-33-33v-58c0-14 8-26 18-32l8-36z"/><path fill="url(#pb_dark)" d="M108 88h64c6 0 10 5 10 11v56c0 10-8 18-18 18h-48c-10 0-18-8-18-18V99c0-6 4-11 10-11z"/><circle cx="140" cy="140" r="56" fill="none" stroke="#c62828" stroke-width="12"/><line x1="86" y1="84" x2="194" y2="196" stroke="#c62828" stroke-width="12" stroke-linecap="round"/><rect x="112" y="24" width="56" height="16" rx="4" fill="#90a4ae"/><path fill="#eceff1" opacity="0.9" d="M118 64h44v10h-44z"/></svg>',
+        corporate:
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" aria-hidden="true" role="img"><defs><linearGradient id="cb_glass" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#e8f5e9"/><stop offset="0.5" stop-color="#a5d6a7"/><stop offset="1" stop-color="#66bb6a"/></linearGradient><linearGradient id="cb_lager" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fffde7"/><stop offset="1" stop-color="#fff176"/></linearGradient><linearGradient id="cb_cap" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ef5350"/><stop offset="1" stop-color="#b71c1c"/></linearGradient></defs><ellipse cx="140" cy="188" rx="42" ry="7" fill="#1b5e20" opacity="0.18"/><path fill="url(#cb_glass)" stroke="#2e7d32" stroke-width="2.5" d="M118 28h44l8 34c14 6 24 22 24 40v72c0 16-13 29-29 29h-50c-16 0-29-13-29-29V102c0-18 10-34 24-40l8-34z"/><path fill="url(#cb_lager)" d="M126 110h28v76c0 10-8 18-18 18h-10c-10 0-18-8-18-18v-76z"/><ellipse cx="140" cy="110" rx="22" ry="7" fill="#fffde7"/><path fill="url(#cb_cap)" d="M116 24h48c4 0 8 3 8 7v14h-64V31c0-4 4-7 8-7z"/><ellipse cx="132" cy="122" rx="3" ry="6" fill="#fff" opacity="0.35"/><ellipse cx="148" cy="124" rx="2.5" ry="5" fill="#fff" opacity="0.28"/><ellipse cx="138" cy="134" rx="2" ry="4" fill="#fff" opacity="0.22"/><path fill="none" stroke="#fff" stroke-width="2" opacity="0.45" d="M122 54h36"/><rect x="118" y="62" width="44" height="36" rx="4" fill="#e8f5e9" opacity="0.35" stroke="#43a047" stroke-width="1"/></svg>',
+        craft:
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" aria-hidden="true" role="img"><defs><linearGradient id="cf_glass" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff8f0"/><stop offset="1" stop-color="#e0d2c5"/></linearGradient><linearGradient id="cf_ipa" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffb74d"/><stop offset="0.45" stop-color="#ef6c00"/><stop offset="1" stop-color="#bf360c"/></linearGradient><linearGradient id="cf_leaf" x1="0" x2="1"><stop offset="0" stop-color="#81c784"/><stop offset="1" stop-color="#2e7d32"/></linearGradient></defs><ellipse cx="140" cy="186" rx="54" ry="8" fill="#3e2723" opacity="0.14"/><path fill="url(#cf_glass)" stroke="#8d6e63" stroke-width="2.5" d="M108 72c0-36 18-52 32-52s32 16 32 52c0 46-16 76-32 112-16-36-32-66-32-112z"/><path fill="url(#cf_ipa)" d="M122 84c0-14 8-24 18-24s18 10 18 24c0 28-8 48-18 72-10-24-18-44-18-72z"/><ellipse cx="140" cy="84" rx="18" ry="6" fill="#ffe0b2"/><path fill="#fff" opacity="0.55" d="M126 78h28c-2 8-12 14-14 14s-12-6-14-14z"/><circle cx="132" cy="78" r="2.5" fill="#fff" opacity="0.65"/><circle cx="146" cy="76" r="2" fill="#fff" opacity="0.55"/><path fill="url(#cf_leaf)" d="M176 44c12-6 22 4 22 18 0 12-10 20-28 18 8-12 10-24 6-36zm-48 8c-10-10 6-28 22-18-6 12-8 24-4 34-14-6-22-18-18-16z"/><path fill="#43a047" d="M152 32c6-10 24-8 28 6-14 2-24 10-28 18-4-10-6-20 0-24z"/><path fill="none" stroke="#fff" stroke-width="3" opacity="0.35" d="M118 96c16 18 24 42 22 68"/></svg>',
+      };
+
+      var timelineData = [
+        {
+          eraKey: "medieval",
+          eraLabel: "c. Middle Ages",
+          shortTitle: "Daily rations &amp; safer-than-water beer",
+          beerCaption:
+            "Typical impression: dark, cloudy ale in leather or wooden jacks—nutrient-dense, variable strength.",
+          bodyParagraphs: [
+            "In medieval towns and countryside, beer was not merely recreation; it was calories, hydration, and sometimes medicine. Laborers on cathedral sites, manorial fields, and river wharves often received measured ale as part of wages—an employer-supplied fuel for repetitive exertion that linked brewing directly to the productivity of work.",
+            "Where wells and rivers carried risk, small beer and household ale could be safer than untreated water because boiling and fermentation altered the microbial landscape (even if germ theory was still centuries away). That practical advantage made beer a working-class survival strategy as well as a noble table staple.",
+            "The inequality lies in the gradient: everyone drank, but not everyone drank the same strength, clarity, or symbolism. Rich tables showcased spiced and prestige brews; poorer tables relied on thinner “small” beer. Unger’s synthesis underscores how the same technology of fermentation sat astride subsistence and display.",
+          ],
+          citation:
+            "Unger, <em>Beer in the Middle Ages and the Renaissance</em> (2004).",
+        },
+        {
+          eraKey: "reinheit",
+          eraLabel: "1516",
+          shortTitle: "The Reinheitsgebot",
+          beerCaption:
+            "After 1516 (and later codifications): pale-to-amber barley beers with pronounced hop bitterness—marketed as “pure.”",
+          bodyParagraphs: [
+            "The Bavarian ordinance of 1516 is often remembered as a recipe rule—barley, hops, water—but its economic meaning was regulatory. By narrowing legitimate ingredients, authorities intervened in competition among urban brewers and rural bakers, who sometimes quarreled over grain.",
+            "Standards can protect consumers from adulteration, yet they also privilege incumbents who can comply and document compliance. The Reinheitsgebot story therefore mixes food safety, guild politics, and territorial branding: quality rhetoric served both drinkers and rulers who taxed trustworthy barrels.",
+            "For inequality, ask who benefited when “beer” became a legally curated category: skilled brewers in privileged towns, consumers promised consistency, and officials who could shut down deviant practice—or newcomers priced out of compliance.",
+          ],
+          citation:
+            "German Beer Purity Law (Reinheitsgebot), 1516; discussed in Unger and standard histories of Bavarian regulation.",
+        },
+        {
+          eraKey: "porter",
+          eraLabel: "18th c.",
+          shortTitle: "Porter: class in a glass",
+          beerCaption:
+            "London porter: nearly opaque brown, velvety head—sold by the pint in taverns that sorted customers by craft and cash.",
+          bodyParagraphs: [
+            "Porter’s very name advertises class geography: it evokes the porters who hauled goods along Thames-side streets—people whose bodies, schedules, and pay were public facts. A heavy, dark, sustaining beer became linked to that occupational world and then to wider “laboring” London.",
+            "As porter scaled in large common breweries, price and reliability improved for urban drinkers, tightening the chain between industrial organization of brewing and the rhythms of dock and warehouse work. The mug you raised could signal not only wealth but work.",
+            "Hornsey’s history connects technical shifts in malting and brewing to social meanings in the public house. Taste here is not private preference alone; it is a cultural shorthand for who performed which jobs—and who could afford to drink something else on a Tuesday night.",
+          ],
+          citation:
+            "Hornsey, <em>A History of Beer and Brewing</em> (2003).",
+        },
+        {
+          eraKey: "industrial",
+          eraLabel: "1700–1830",
+          shortTitle: "Steam, scale, and industrial brewing",
+          beerCaption:
+            "Pale ale and porter in glass bottles and pint measures—products of measured gravity, coal-fired steam, and clocked labor.",
+          bodyParagraphs: [
+            "Mathias’s classic account treats brewing as an early factory industry: steam engines lifted mash tun throughput; larger copper trains matched rising urban demand; bookkeeping tightened yields per bushel of malt. Capital-deep firms could amortize equipment across enormous volumes.",
+            "Geography shifted power toward riverside and rail-linked towns where coal and barley met concentrated consumers. Smaller country breweries faced structural pressure—not necessarily immediate disappearance, but a narrowing window if they could not match costs.",
+            "The inequality lens is twofold: workers gained wage employment in organized breweries under novel discipline, while owners captured economies of scale that reshaped market structure long before the twentieth-century giants.",
+          ],
+          citation:
+            "Mathias, <em>The Brewing Industry in England 1700–1830</em> (1959).",
+        },
+        {
+          eraKey: "prohibition",
+          eraLabel: "1920s (U.S.)",
+          shortTitle: "Prohibition &amp; moral reform",
+          beerCaption:
+            "Legal markets offered near-beers and tonics; illicit trade favored concentrated spirits and concealed containers—not the open pint.",
+          bodyParagraphs: [
+            "National Prohibition (1920–1933) did not end drinking; it displaced it into basements, blind pigs, and suitcases. In New York and other cities, enforcement intersected with ethnicity, neighborhood prestige, and policing budgets—turning a temperance statute into a map of who got searched and who got served.",
+            "Blocker’s work on American temperance stresses moral reform as a political coalition: Protestant uplift narratives, rural unease with immigrant urban saloons, and anxieties about wages spent “unproductively.” Class and culture were inseparable in reform rhetoric.",
+            "Economically, Prohibition interrupted legitimate brewing capital, rewarded organized crime where demand proved inelastic, and encouraged consolidation strategies that would later dominate legal beer after repeal—another twist in how policy reshaped market structure.",
+          ],
+          citation:
+            "Blocker, <em>American Temperance Movements</em> (1989).",
+        },
+        {
+          eraKey: "corporate",
+          eraLabel: "Post–WWII",
+          shortTitle: "Corporate giants &amp; homogenization",
+          beerCaption:
+            "Mass-market lager in chromed longneck bottles and cans—cold, bright, and identical from coast to coast.",
+          bodyParagraphs: [
+            "Postwar advertising, national distribution, and refrigeration turned a handful of brands into default choices for millions. Elzinga’s industry overview traces concentration, pricing power, and the economics of scale that reward standardized lagers with long shelf stories.",
+            "Homogenization is not only aesthetic; it is logistical. When taste narrows to a few winning formulas, niche variation becomes expensive for incumbents to pursue—and cheap national price points squeeze regional diversity.",
+            "Inequality shows up in branding jobs to suburbs, political access for large firms, and the quiet narrowing of what “normal beer” meant on working-class tables once local brewing infrastructures had consolidated.",
+          ],
+          citation:
+            'Elzinga, “The Beer Industry,” <em>Journal of Economic Perspectives</em> (2015).',
+        },
+        {
+          eraKey: "craft",
+          eraLabel: "1980s–2000s",
+          shortTitle: "Craft revival &amp; resource partitioning",
+          beerCaption:
+            "IPA, stout, saison in tulip glasses and branded glassware—color-forward, aroma-heavy, and deliberately anti-generic.",
+          bodyParagraphs: [
+            "Microbreweries and brewpubs reversed part of the mid-century convergence by selling differentiation: hops, color, story, place. Carroll and Swaminathan’s resource-partitioning argument suggests large generalists leave stylistic niches underserved because scale rewards bland reliability; small specialists colonize those niches once consumer tastes fragment.",
+            "The revival was also regional branding: cities marketed beer tourism; bars curated taps; consumers learned vocabulary—IBU, Brett, barrel-aged—that worked like cultural capital in Bourdieu’s sense.",
+            "Yet craft’s rise did not erase oligopoly at the mass-market core; it layered a premium sphere where entry is easier than building a national lager empire but where race, price points, and retail shelf access still sort who participates and who profits.",
+          ],
+          citation:
+            "Carroll &amp; Swaminathan, <em>American Journal of Sociology</em> (2000).",
+        },
+      ];
+
+      var listEl = document.getElementById("timeline-node-list");
+      var card = document.getElementById("timeline-card");
+      var cardVisual = document.getElementById("card-visual");
+      var elSvgWrap = document.getElementById("card-svg-wrap");
+      var elBeerCap = document.getElementById("card-beer-caption");
+      var elEra = document.getElementById("card-era");
+      var elTitle = document.getElementById("card-title-text");
+      var elBody = document.getElementById("card-body");
+      var elCite = document.getElementById("card-cite");
+      var elProgress = document.getElementById("timeline-progress");
+      var elToast = document.getElementById("timeline-unlock-toast");
+      var elNext = document.getElementById("card-next-btn");
+      var synthesisSection = document.getElementById("synthesis");
+
+      /** Furthest era index the user may open (starts at first era only). */
+      var maxClickableIndex = 0;
+      var currentCardIndex = 0;
+
+      function prefersReducedMotion() {
+        return (
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        );
+      }
+
+      function updateSynthesisVisibility() {
+        if (!synthesisSection) return;
+        if (maxClickableIndex >= timelineData.length - 1) {
+          synthesisSection.hidden = false;
+        }
+      }
+
+      function scrollToSynthesis() {
+        updateSynthesisVisibility();
+        if (!synthesisSection) return;
+        synthesisSection.scrollIntoView({
+          behavior: prefersReducedMotion() ? "auto" : "smooth",
+          block: "start",
+        });
+        var h = document.getElementById("synthesis-heading");
+        if (h) h.focus();
+      }
+
+      function updateCardActions(index) {
+        currentCardIndex = index;
+        var last = timelineData.length - 1;
+        elNext.classList.remove("is-synthesis");
+        if (index < last) {
+          var nextIdx = index + 1;
+          var unlocked = nextIdx <= maxClickableIndex;
+          elNext.disabled = !unlocked;
+          var nextEra = timelineData[nextIdx].eraLabel;
+          var nextTitle = stripHtml(timelineData[nextIdx].shortTitle);
+          elNext.textContent = unlocked
+            ? "Next era: " + nextEra + " — " + nextTitle + " →"
+            : "Unlock the next era from the trail above first";
+          elNext.onclick = function () {
+            if (elNext.disabled) return;
+            setActive(nextIdx);
+            animateCardUpdate(nextIdx);
+            window.setTimeout(function () {
+              maybeAdvance(nextIdx);
+            }, prefersReducedMotion() ? 0 : 200);
+          };
+        } else {
+          elNext.classList.add("is-synthesis");
+          elNext.disabled = false;
+          elNext.textContent = "Jump to synthesis & big-picture takeaways →";
+          elNext.onclick = function () {
+            scrollToSynthesis();
+          };
+        }
+      }
+
+      function renderProgress() {
+        var n = timelineData.length;
+        if (maxClickableIndex >= n - 1) {
+          elProgress.textContent =
+            "Trail complete — all " + n + " eras are open. Revisit any stop.";
+          return;
+        }
+        var unlocked = maxClickableIndex + 1;
+        elProgress.textContent =
+          "Trail unlocked: " +
+          unlocked +
+          " of " +
+          n +
+          " eras — select the next numbered era in order to advance.";
+      }
+
+      function renderCard(index) {
+        var d = timelineData[index];
+        elEra.textContent = d.eraLabel;
+        elTitle.innerHTML = d.shortTitle;
+        var html = "";
+        for (var p = 0; p < d.bodyParagraphs.length; p++) {
+          html += "<p>" + d.bodyParagraphs[p] + "</p>";
+        }
+        elBody.innerHTML = html;
+        elCite.innerHTML = d.citation;
+        elSvgWrap.innerHTML = BEER_SVGS[d.eraKey] || "";
+        elBeerCap.textContent = d.beerCaption || "";
+        card.setAttribute("data-era", d.eraKey);
+        cardVisual.style.setProperty("--era-accent", ACCENTS[d.eraKey] || ACCENTS.medieval);
+        updateCardActions(index);
+      }
+
+      function setActive(index) {
+        var buttons = listEl.querySelectorAll(".timeline-node");
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].setAttribute("aria-pressed", i === index ? "true" : "false");
+        }
+      }
+
+      function syncNodeStates() {
+        var buttons = listEl.querySelectorAll(".timeline-node");
+        for (var i = 0; i < buttons.length; i++) {
+          var locked = i > maxClickableIndex;
+          buttons[i].disabled = locked;
+          buttons[i].closest("li").classList.toggle("is-locked", locked);
+        }
+        renderProgress();
+        updateSynthesisVisibility();
+        updateCardActions(currentCardIndex);
+      }
+
+      function maybeAdvance(index) {
+        if (index === maxClickableIndex && maxClickableIndex < timelineData.length - 1) {
+          maxClickableIndex++;
+          syncNodeStates();
+          updateSynthesisVisibility();
+          var name = timelineData[maxClickableIndex].eraLabel;
+          elToast.textContent =
+            "Unlocked: next era — " + stripHtml(timelineData[maxClickableIndex].shortTitle) + " (" + name + ").";
+          window.setTimeout(function () {
+            elToast.textContent = "";
+          }, 5000);
+        } else {
+          elToast.textContent = "";
+        }
+      }
+
+      function animateCardUpdate(index) {
+        var reduced =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function applyContent() {
+          renderCard(index);
+          if (!reduced) {
+            card.classList.remove("is-updating");
+          }
+        }
+
+        if (reduced) {
+          applyContent();
+          card.focus();
+          return;
+        }
+
+        card.classList.add("is-updating");
+        window.setTimeout(function () {
+          applyContent();
+          requestAnimationFrame(function () {
+            card.classList.remove("is-updating");
+            card.focus();
+          });
+        }, 180);
+      }
+
+      function stripHtml(html) {
+        var t = document.createElement("div");
+        t.innerHTML = html;
+        return t.textContent || "";
+      }
+
+      timelineData.forEach(function (item, index) {
+        var li = document.createElement("li");
+        var row = document.createElement("div");
+        row.className = "node-row";
+
+        var badge = document.createElement("div");
+        badge.className = "step-badge";
+        badge.textContent = index + 1;
+
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "timeline-node";
+        btn.setAttribute("aria-pressed", index === 0 ? "true" : "false");
+        btn.setAttribute("aria-controls", "timeline-card");
+        btn.id = "timeline-node-" + index;
+        btn.setAttribute(
+          "aria-label",
+          "Era " +
+            (index + 1) +
+            ": " +
+            item.eraLabel +
+            ". " +
+            stripHtml(item.shortTitle)
+        );
+
+        var era = document.createElement("span");
+        era.className = "node-era";
+        era.textContent = item.eraLabel;
+
+        var lab = document.createElement("span");
+        lab.className = "node-label";
+        lab.textContent = stripHtml(item.shortTitle);
+
+        var hint = document.createElement("span");
+        hint.className = "lock-hint";
+        hint.textContent = "Open the previous era on the trail to unlock.";
+
+        btn.appendChild(era);
+        btn.appendChild(lab);
+        btn.appendChild(hint);
+
+        btn.addEventListener("click", function () {
+          if (btn.disabled) return;
+          setActive(index);
+          animateCardUpdate(index);
+          window.setTimeout(function () {
+            maybeAdvance(index);
+          }, prefersReducedMotion() ? 0 : 200);
+        });
+
+        row.appendChild(badge);
+        row.appendChild(btn);
+        li.appendChild(row);
+        listEl.appendChild(li);
+      });
+
+      syncNodeStates();
+      renderCard(0);
+    })();
+  </script>
+</body>
+</html>
